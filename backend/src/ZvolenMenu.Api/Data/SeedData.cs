@@ -16,6 +16,7 @@ public static class SeedData
 
         var today = DateOnly.FromDateTime(DateTime.Today);
 
+        var uAlexa = R("U Alexa", "Námestie SNP 36/51, Zvolen", 48.57731, 19.12912, "045 533 3811", "https://www.ualexazv.sk/denne-menu");
         var narodnyDom = R("Národný dom", "Námestie SNP 1, Zvolen", 48.57655, 19.12685, "0908 111 001");
         var ambassador = R("Hotel Ambassador", "Námestie SNP 7, Zvolen", 48.57695, 19.12540, "045 532 1100");
         var koliba = R("Koliba pod zámkom", "J. Jiskru 2, Zvolen", 48.57435, 19.12590, "0905 222 333");
@@ -30,7 +31,7 @@ public static class SeedData
         var podzamok = R("Kaviareň Pod vežou", "Námestie SNP 15, Zvolen", 48.57620, 19.12770);
 
         db.Restaurants.AddRange(
-            narodnyDom, ambassador, koliba, italia, uJana, asia,
+            uAlexa, narodnyDom, ambassador, koliba, italia, uJana, asia,
             lesna, bistro, sport, garden, grill, podzamok);
 
         
@@ -101,14 +102,15 @@ public static class SeedData
         await db.SaveChangesAsync();
     }
 
-    private static Restaurant R(string name, string address, double lat, double lng, string? phone = null) =>
+    private static Restaurant R(string name, string address, double lat, double lng, string? phone = null, string? website = null) =>
         new()
         {
             Name = name,
             Address = address,
             Latitude = lat,
             Longitude = lng,
-            Phone = phone
+            Phone = phone,
+            Website = website
         };
 
     private static DailyMenu Menu(Restaurant restaurant, DateOnly date, string? note, params Meal[] items)

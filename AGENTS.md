@@ -24,16 +24,16 @@ CORS is locked to `http://localhost:5173` — the frontend must be served from t
 
 ## Database
 
-- SQLite file at `backend/data/zvolenmenu.db`, gitignored, auto-created on first run.
-- **No EF migrations.** Schema is created at startup via `EnsureCreatedAsync` plus manual `CREATE TABLE IF NOT EXISTS` statements in `Program.cs`. To change schema, edit both the EF model (`AppDbContext.OnModelCreating`) and the raw SQL in `EnsureTablesExistAsync`.
-- Seed data (`SeedData.cs`) inserts 12 restaurants and menus **for today's date only**. The API filters by `?date=`, so menus exist only for the current day unless added manually.
-- `Meal.Price` is `decimal` in EF but `TEXT` in the raw SQLite DDL — a known mismatch, not a bug to "fix" casually.
+- PostgreSQL, connection string in `backend/src/ZvolenMenu.Api/appsettings.json` (`ConnectionStrings:Default`, defaults to `localhost:5432`, database `zvolenmenu`, user `postgres`).
+- Database and tables are created at startup via `EnsureCreatedAsync` plus manual `CREATE TABLE IF NOT EXISTS` statements in `Program.cs` (PostgreSQL dialect). To change schema, edit both the EF model (`AppDbContext.OnModelCreating`) and the raw SQL in `EnsureTablesExistAsync`.
+- Seed data (`SeedData.cs`) inserts 13 restaurants (U Alexa first, with a Website) and menus **for today's date only**. The API filters by `?date=`, so menus exist only for the current day unless added manually.
+- `Meal.Price` is `decimal` in EF and `numeric(8,2)` in the raw PostgreSQL DDL — consistent on both sides.
 
 ## Script (`script/`)
 
-- Uses **Ollama** at `http://localhost:11434` with model `qwen2.5:7b` — the README's Gemini/Google AI Studio instructions are stale; trust `main.py`.
-- Requires Ollama running locally with the model pulled (`ollama pull qwen2.5:7b`).
-- Reads restaurant ID 1 from the SQLite DB, scrapes its `Website`, sends page text to Ollama for parsing. Does not write to the DB.
+- Uses the Open WebUI API at `https://llm.ai.e-infra.cz/v1/` (OpenAI-compatible) with model `qwen3.5` — the model is multimodal, so photo-based menus are supported.
+- Requires an API key in `script/.env` (`api_key=...`), generated in Open WebUI under Settings → Account → API keys. The `.env` file is gitignored.
+- Reads restaurant ID 1 from the same PostgreSQL database as the backend. Connection can be overridden with `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` (environment variables or `.env`); defaults match `appsettings.json` (`localhost:5432/zvolenmenu`, user `postgres`). Sends page text plus up to 5 images to the API for parsing. Does not write to the DB.
 - Setup: `python3 -m venv .venv` in `script/`, then `pip install -r requirements.txt`.
 
 ## Frontend TypeScript strictness

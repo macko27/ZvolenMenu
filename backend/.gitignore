@@ -39,3 +39,4 @@ data/*.db-*
 # Frontend
 frontend/node_modules/
 frontend/dist/
+src/ZvolenMenu.Api/Data/zvolenmenu.db

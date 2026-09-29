@@ -9,16 +9,32 @@ Databázu nemení.
 .\script\.venv\Scripts\python.exe .\script\main.py
 ```
 
-Parser používa Gemini Flash cez Google AI Studio. API kľúč nastavte iba v
-prostredí, nie do zdrojového kódu:
+Parser používa API Open WebUI na `https://llm.ai.e-infra.cz/v1/` s modelom
+`qwen3.5` (vie čítať aj obrázky, takže zvláda menu vo forme fotografie).
 
-```powershell
-$env:GEMINI_API_KEY = "VÁŠ_API_KĽÚČ"
-.\script\.venv\Scripts\python.exe .\script\main.py
+## API kľúč
+
+Kľúč vygeneruješ v Open WebUI: Settings → Account (Účet) → API keys →
+Generate new API key. Nastav ho ako premennú prostredia `api_key` (napr. v
+run configuration IDE), prípadne do súboru `script/.env` — nie do zdrojového
+kódu:
+
+```
+api_key=TVOJ_API_KĽÚČ
 ```
 
-Skript odošle Google iba text načítanej stránky. Databázu nemení a výsledok
-naďalej vypisuje ako JSON.
+Súbor `.env` je gitignorovaný.
+
+## Database
+
+The script reads restaurant ID 1 from the same PostgreSQL database as the
+backend (default `localhost:5432`, database `zvolenmenu`, user `postgres`,
+password `postgres`). Connection can be overridden via environment variables
+`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` or the same keys in
+`script/.env`.
+
+Skript odošle na API iba text načítanej stránky a najviac 5 obrázkov z nej
+(každý do 5 MB). Databázu nemení a výsledok naďalej vypisuje ako JSON.
 
 Stránka U Alexa zverejňuje iba aktuálne menu, nie samostatné menu pre všetky
 dni. Skript preto automaticky označí výsledok dnešným dátumom; staršie alebo
